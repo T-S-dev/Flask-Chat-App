@@ -1,0 +1,57 @@
+{% extends 'base.html'%} {% block content%}
+
+<div class="chat-container">
+  <div class="chat-header">
+    <div class="room-code">Room Code : {{room_code}}</div>
+    <div id="open-members" onclick="openMembersList()">
+      <img src="../static/svg/open-members.svg" alt="members" />
+    </div>
+  </div>
+
+  <div id="members-section">
+    <div class="close-members" onclick="closeMembersList()">
+      <img src="../static/svg/close-members.svg" alt="close" />
+    </div>
+  </div>
+
+  <div id="messages"></div>
+
+  <div class="chat-footer">
+    <textarea
+      rows="1"
+      maxlength="4000"
+      name="input-message"
+      id="input-message"
+      placeholder="Type your message"
+      value=""
+    ></textarea>
+
+    <button name="send" id="send-btn" onClick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script src="../static/js/chat-room.js"></script>
+
+<script>
+  "{% for message in messages %}";
+  var direction =
+    localStorage.getItem("name") === "{{message.name}}"
+      ? "outgoing"
+      : "incoming";
+
+  createMessage(
+    `{{message.name}}`,
+    `{{message.message}}`,
+    `{{message.dateTime}}`,
+    direction
+  );
+
+  ("{% endfor %}");
+
+  ("{% for name in member_names %}");
+  addMember(`{{name}}`);
+
+  ("{% endfor %}");
+</script>
+
+{% endblock %}

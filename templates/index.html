@@ -1,0 +1,48 @@
+{% extends 'base.html' %} {% block content %}
+<form method="post" class="home-form">
+  <h3 id="heading">Enter Chat Room</h3>
+
+  <div class="field">
+    <input
+      type="text"
+      name="name"
+      placeholder="Enter Name"
+      class="input-field"
+      value="{{name}}"
+      autocomplete="off"
+    />
+  </div>
+
+  <div class="field">
+    <input
+      type="text"
+      name="code"
+      placeholder="Enter Room Code"
+      class="input-field"
+      value="{{code}}"
+      autocomplete="off"
+    />
+  </div>
+
+  <div class="btn-container">
+    <button type="submit" name="join" class="btn">Join Room</button>
+    <button type="submit" name="create" class="btn">Create Room</button>
+  </div>
+
+  <div class="errors">
+    {% if error %}
+    <ul>
+      <li>{{ error }}</li>
+    </ul>
+    {% endif %}
+  </div>
+</form>
+<script>
+  // save name input to local storage on submit
+  const nameInput = document.querySelector('input[name="name"]');
+  const form = document.querySelector("form");
+  form.addEventListener("submit", (e) => {
+    localStorage.setItem("name", nameInput.value.trim().toUpperCase());
+  });
+</script>
+{% endblock %}
