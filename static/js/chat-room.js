@@ -5,13 +5,13 @@ const messages = document.getElementById("messages");
 const inputArea = document.getElementById("input-message");
 
 function autoResizeTextArea() {
-  var style = window.getComputedStyle(textarea);
-  var paddingTop = parseInt(style.getPropertyValue("padding-top"));
-  var paddingBottom = parseInt(style.getPropertyValue("padding-bottom"));
-  var lineHeight = parseInt(style.getPropertyValue("line-height"));
+  const style = window.getComputedStyle(textarea);
+  const paddingTop = parseInt(style.getPropertyValue("padding-top"));
+  const paddingBottom = parseInt(style.getPropertyValue("padding-bottom"));
+  const lineHeight = parseInt(style.getPropertyValue("line-height"));
 
-  var maxLines = 5;
-  var maxHeight = (maxLines - 1) * lineHeight + paddingTop + paddingBottom;
+  const maxLines = 5;
+  const maxHeight = (maxLines - 1) * lineHeight + paddingTop + paddingBottom;
 
   this.style.height = "auto";
   this.style.overflowY = "hidden";
@@ -44,7 +44,7 @@ function sanitizeString(str) {
   return str.replace(reg, (match) => map[match]);
 }
 
-var socket = io();
+const socket = io();
 
 const createMessage = (name, msg, dateTime, type) => {
   const nameTag = type === "outgoing" ? "" : `<strong>${name}: </strong>`;
@@ -64,7 +64,7 @@ const createMessage = (name, msg, dateTime, type) => {
 
 const addMember = (name) => {
   // Create a new span element for the new member
-  var newMember = document.createElement("span");
+  const newMember = document.createElement("span");
   newMember.className = "member";
   newMember.textContent = name;
 
@@ -74,8 +74,8 @@ const addMember = (name) => {
 
 const removeMember = (name) => {
   // Find the span element for the member who left
-  var members = document.getElementsByClassName("member");
-  for (var i = 0; i < members.length; i++) {
+  const members = document.getElementsByClassName("member");
+  for (let i = 0; i < members.length; i++) {
     if (members[i].textContent === name) {
       // Remove the member from the members section
       members[i].parentNode.removeChild(members[i]);

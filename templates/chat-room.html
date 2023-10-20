@@ -34,7 +34,7 @@
 
 <script>
   "{% for message in messages %}"
-  var direction =
+  direction =
     localStorage.getItem("name") === "{{message.name}}"
       ? "outgoing"
       : "incoming";
