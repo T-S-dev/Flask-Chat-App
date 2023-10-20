@@ -33,7 +33,7 @@
 <script src="../static/js/chat-room.js"></script>
 
 <script>
-  "{% for message in messages %}";
+  "{% for message in messages %}"
   var direction =
     localStorage.getItem("name") === "{{message.name}}"
       ? "outgoing"
