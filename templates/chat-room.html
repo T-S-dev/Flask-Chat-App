@@ -35,14 +35,14 @@
 <script>
   "{% for message in messages %}"
   direction =
-    localStorage.getItem("name") === "{{message.name}}"
+    localStorage.getItem("userId") === "{{message.sender_id}}"
       ? "outgoing"
       : "incoming";
 
   createMessage(
-    `{{message.name}}`,
+    `{{message.sender_name}}`,
     `{{message.message}}`,
-    `{{message.dateTime}}`,
+    `{{message.timestamp}}`,
     direction
   );
 

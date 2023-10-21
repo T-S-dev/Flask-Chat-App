@@ -46,8 +46,38 @@ function sanitizeString(str) {
 
 const socket = io();
 
-const createMessage = (name, msg, dateTime, type) => {
+const convertUtcToLocal = (utcDateTimeString) => {
+  // Parse the UTC datetime string
+  const utcDateTime = new Date(utcDateTimeString);
+
+  // Manually create a UTC Date object
+  const utcDate = new Date(
+    utcDateTime.getUTCFullYear(),
+    utcDateTime.getUTCMonth(),
+    utcDateTime.getUTCDate(),
+    utcDateTime.getUTCHours(),
+    utcDateTime.getUTCMinutes(),
+    utcDateTime.getUTCSeconds(),
+    utcDateTime.getUTCMilliseconds()
+  );
+
+  // Use toLocaleString to format the date in the user's local timezone
+  const formattedDateTime = utcDate.toLocaleString(undefined, {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false, // Use 24-hour format
+  });
+
+  return formattedDateTime;
+};
+
+const createMessage = (name, msg, timestamp, type) => {
   const nameTag = type === "outgoing" ? "" : `<strong>${name}: </strong>`;
+
+  timestamp = convertUtcToLocal(timestamp);
 
   const message = `
     <div class="message ${type}">
@@ -55,14 +85,14 @@ const createMessage = (name, msg, dateTime, type) => {
         ${nameTag}
         ${msg}
       </span>
-      <span class="muted">${dateTime}</span>
+      <span class="muted">${timestamp}</span>
     </div>
   `;
   messages.innerHTML += message;
   messages.scrollTop = messages.scrollHeight;
 };
 
-const addMember = (name) => {
+const addMember = (name, id) => {
   // Create a new span element for the new member
   const newMember = document.createElement("span");
   newMember.className = "member";
@@ -70,6 +100,7 @@ const addMember = (name) => {
 
   // Add the new member to the members section
   document.getElementById("members-section").appendChild(newMember);
+  localStorage.setItem("userId", id);
 };
 
 const removeMember = (name) => {
@@ -85,29 +116,38 @@ const removeMember = (name) => {
 };
 
 socket.on("userConnected", (data) => {
-  createMessage(data.name, data.message, data.dateTime, "user-connected");
-  addMember(data.name);
+  createMessage(data.name, data.message, data.timestamp, "user-connected");
+  addMember(data.name, data.id);
 });
 
 socket.on("userDisconnected", (data) => {
-  createMessage(data.name, data.message, data.dateTime, "user-disconnected");
+  createMessage(data.name, data.message, data.timestamp, "user-disconnected");
   removeMember(data.name);
 });
 
 socket.on("messageReceived", (data) => {
-  createMessage(data.name, data.message, data.dateTime, "incoming");
+  createMessage(data.name, data.message, data.timestamp, "incoming");
 });
 
 const sendMessage = () => {
   const message = sanitizeString(inputArea.value).trim();
-  const currentDateTime = new Date().toLocaleString();
+  // Current date time is only used on client side to show when the message was sent
+  // Server side date time is used to store the message in the database and send it to other users
+  const currentDateTimeUtc = Date.UTC(
+    new Date().getUTCFullYear(),
+    new Date().getUTCMonth(),
+    new Date().getUTCDate(),
+    new Date().getUTCHours(),
+    new Date().getUTCMinutes(),
+    new Date().getUTCSeconds(),
+    new Date().getUTCMilliseconds()
+  );
   const name = localStorage.getItem("name");
   if (message === "") return;
   socket.emit("messageSent", {
     message: message,
-    dateTime: currentDateTime,
   });
-  createMessage(name, message, currentDateTime, "outgoing");
+  createMessage(name, message, currentDateTimeUtc, "outgoing");
   inputArea.value = "";
   // Resize textarea to original size
   textarea.style.height = "auto";
